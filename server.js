@@ -23,6 +23,9 @@ app.post("/email", async (req, res) => {
 		console.log(error);
 	}
 });
+app.get("/", (req, res) => {
+	res.status(200).json({ status: "working" });
+});
 
 app.listen(process.env.PORT, () => {
 	console.log("Listening to port", process.env.PORT);
