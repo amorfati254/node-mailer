@@ -6,7 +6,7 @@ const { main } = require("./mail");
 
 const app = express();
 const corsOption = {
-	origin: "https://premiermart.ml",
+	origin: ["https://premiermart.ml", "http://localhost:5173"],
 };
 app.use(cors(corsOption));
 app.use(express.json());
