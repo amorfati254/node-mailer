@@ -2,7 +2,8 @@ require('dotenv').config();
 
 import express from 'express';
 import cors from 'cors';
-import { main } from './mail';
+import { sendMail } from './mail';
+import { createOrder } from './order';
 
 const app = express();
 const corsOption = {
@@ -15,21 +16,35 @@ const corsOption = {
 app.use(cors(corsOption));
 app.use(express.json());
 type ResBody = { success: string } | { error: string } | { status: string };
-type ReqBody = {
+export type Order = {
 	name: string;
 	number: string;
-	orderItems: any[];
+	orderItems: OrderItem[];
 	total: number;
 };
-app.post<never, ResBody, ReqBody>('/email', async (req, res) => {
-	const { name, number, orderItems, total } = req.body;
-	console.log('OrderItmes from req.body: ', orderItems);
+export type OrderItem = {
+	name: string;
+	price: number;
+	quantity: number;
+	id: string;
+};
+type ReqBody = Order;
+app.post<never, ResBody, ReqBody>('/order', async (req, res) => {
+	const order = req.body;
+	console.log('OrderItems from req.body: ', order.orderItems);
 	try {
-		const info = await main({ name, number, orderItems, total });
-		console.log('Info from main function', info);
+		const sent = await createOrder(order);
+		if (sent) {
+			const info = await sendMail(order);
+			console.log('Info from main function', info);
+		} else {
+			throw new Error('failed to create order in sanity');
+		}
 		res.status(200).json({ success: 'email sent' });
 	} catch (error) {
-		res.status(400).json({ error: 'authentication failed' });
+		if (error instanceof Error) {
+			res.status(400).json({ error: error.message });
+		}
 		console.log(error);
 	}
 });

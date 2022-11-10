@@ -1,12 +1,6 @@
 'use strict';
 import nodemailer from 'nodemailer';
-type OrderDetails = {
-	name: string;
-	number: string;
-	orderItems: OrderItem[];
-	total: number;
-};
-type OrderItem = { name: string; price: number; quantity: number };
+import { Order, OrderItem } from './server';
 const orderTemplate = (orderItems: OrderItem[]) => {
 	let orders = '';
 	orderItems.map((order, i) => {
@@ -23,9 +17,8 @@ const orderTemplate = (orderItems: OrderItem[]) => {
 	return orders;
 };
 // async..await is not allowed in global scope, must use a wrapper
-const main = async (data: OrderDetails) => {
+const sendMail = async (data: Order) => {
 	const order = orderTemplate(data.orderItems);
-	// console.log("in main: order", order);
 	// create reusable transporter object using the default SMTP transport
 	let transporter = nodemailer.createTransport({
 		host: 'smtp.titan.email',
@@ -58,4 +51,4 @@ const main = async (data: OrderDetails) => {
 
 	return info;
 };
-export { main };
+export { sendMail };
