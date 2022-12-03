@@ -19,6 +19,7 @@ export const createOrder = async (data: Order) => {
 	});
 	const order = {
 		_type: 'order',
+		userID: data.userID,
 		name: data.name,
 		phone: data.number,
 		orderStatus: 'pending',

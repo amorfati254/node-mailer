@@ -17,6 +17,7 @@ app.use(cors(corsOption));
 app.use(express.json());
 type ResBody = { success: string } | { error: string } | { status: string };
 export type Order = {
+	userID: string;
 	name: string;
 	number: string;
 	orderItems: OrderItem[];
